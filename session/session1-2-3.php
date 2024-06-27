@@ -685,6 +685,8 @@ $x = array("a" => "red", "b" => "green");
 $y = array("c" => "blue", "d" => "yellow");
 var_dump($x !== $y);//true
 echo "<br>";
+// ternary operator
+
 
 ?>
 <!DOCTYPE html>
