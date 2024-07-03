@@ -2,7 +2,7 @@
 <?php
 var_dump($_GET);
 if (isset($_POST["signup"])) {
-    header('Location:bounse-sign-up.php');
+    header('Location:bonus-sign-up.php');
 }
 
 // database for users and passwords
