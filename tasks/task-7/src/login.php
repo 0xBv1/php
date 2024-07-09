@@ -1,7 +1,7 @@
 <?php require "../includes/ckdata.php"; ?>
 <?php require "../includes/head.php"; ?>
 
-
+<h1>Login</h1>
 
 <form action="" method="post">
   <div class="form-group">
