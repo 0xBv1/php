@@ -1,0 +1,54 @@
+
+if ($_POST['upload'] ) {
+        $fileName = $_FILES['test-file']['name'];
+        $fileType = $_FILES['test-file']['type'];
+        $fileTmpName = $_FILES['test-file']['tmp_name'];
+        $fileError = $_FILES['test-file']['error'];
+        $fileSize = $_FILES['test-file']['size'];
+        echo "File Name: $fileName <br>";
+        echo "File Type: $fileType <br>";
+        echo "File Temp Name: $fileTmpName <br>";
+        echo "File Error: $fileError <br>";
+        echo "File Size: $fileSize <br>";
+
+        $flag = 0; //flag to check if all conditions are met
+        //check if file is uploaded
+        if ($fileError == 0 ) {
+            $flag += 1;
+        } else {
+            echo "Error: $fileError";
+        }
+        //check file size  
+        if ($fileSize < 1000000) {
+            $flag += 1;
+        } else {
+            echo "File size is too large";
+        }
+        // Check file type
+        // Allowed file types
+        $allowed = array('jpeg', 'png');
+
+        // Get file extension
+        $parts = explode('.', $fileName);
+        $fileExtension = strtolower(end($parts));
+
+        // Check if file extension is in allowed array
+        $fileTypeCheck = in_array($fileExtension, $allowed) ? 'File type is supported' : 'File type is not supported';
+        echo $fileTypeCheck;
+
+        // // Check file type using file type
+        // if ($fileType == 'image/jpeg' || $fileType == 'image/png') {
+        //     $flag += 1;
+        // } else {
+        //     echo "File type is not supported";
+        // }
+
+        // If all conditions are met, move file to uploads folder
+        if ($flag == 3) {
+            move_uploaded_file($fileTmpName, "uploads/$fileName");
+            echo "File uploaded successfully";
+        } else {
+            echo "File not uploaded";
+        }
+    }
+}else{echo "Please upload a file";}

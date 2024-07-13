@@ -16,5 +16,5 @@
 
   <button type="submit" class="btn btn-primary">Login</button>
   <button  type="submit" class="btn btn-primary" name ='signup' value="true">signup</button>
-  </form>
+  </form> 
 <?php require "../includes/foot.php"; ?>
