@@ -1,5 +1,5 @@
 <?php
-var_dump($_POST);
+// var_dump($_POST);
 
 // Array containing usernames and passwords
 $users = array(

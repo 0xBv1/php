@@ -58,8 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
     <form action="" method="post" enctype="multipart/form-data">
         <input type="file" name="test-file">
-            <br><br>
-
+            <br>
         <input type="submit" name="upload" value="Upload">
     </form>
 </body>

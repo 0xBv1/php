@@ -15,36 +15,70 @@
 
 <body>
     <div class="registration-form">
-        <form method="post">
-            <!-- <div class="form-icon">
-                <span><i class="icon icon-user"></i></span>
-            </div>
+        <form method="post" enctype="multipart/form-data">
+
             <div class="form-group">
+            
+            <label for="username">Username:</label>
                 <input type="text" class="form-control item" name="username" id="username" placeholder="Username">
+                <?php foreach ($error_user as $error): ?>
+                    <h5><?= $error ?><br></h5>
+                <?php endforeach; ?>
+
             </div>
             <div class="form-group">
-                <input type="password" class="form-control item" name="password" id="password" placeholder="Password">
+            <label for="username">Password:</label>
+                <input type="password" class="form-control item" name="password" id="password" >
+                <?php foreach ($error_pass as $error): ?>
+                    <h5><?= $error ?><br></h5>
+                <?php endforeach; ?>
+
             </div>
             <div class="form-group">
-                <input type="password" class="form-control item" name="repassword" id="password" placeholder="Re-Enter Password">
-            </div> 
-             <div class="form-group">
-                <input type="text" class="form-control item" name="email" id="email" placeholder="Email">
+            <label for="username">Re-Enter Password:</label>
+                <input type="password" class="form-control item" name="repassword" id="password"
+                    >
             </div>
             <div class="form-group">
-                <input type="tel" id="phone" pattern="[0-9]{10}" required class="form-control item" name="phone-number" 
+            <label for="username">Email:</label>
+            <input type="text" class="form-control item" name="email" id="email" placeholder="exsmple@email.com">
+                <?php foreach ($error_email as $error): ?>
+                    <h5><?= $error ?><br></h5>
+                <?php endforeach; ?>
+
+            </div>
+            <div class="form-group">
+            <label for="phone">Phone Number:</label>
+                <input type="tel" id="phone" pattern="[0-9]{10}" class="form-control item" name="phone-number"
                     placeholder="Phone Number">
-                    <small>Format: 1×××××××××</small><br>
-                    
-            </div>-->
-            <div class="form-group">
-                <input type="text" class="form-control item" name="birth-date" id="birth-date" placeholder="Birth Date">
+                <?php foreach ($error_phone as $error): ?>
+                    <h5><?= $error ?><br></h5>
+                <?php endforeach; ?>
+
+                <small>Format: 1×××××××××</small><br>
+
             </div>
-            <!--<div class="form-group">
+            <div class="form-group">
+            <label for="dob">Date of Birth (DD/MM/YYYY):</label>
+                <input type="text" class="form-control item" name="birth-date" id="birth-date" placeholder="Birth Date">
+                <?php foreach ($error_date as $error): ?>
+                    <h5><?= $error ?><br></h5>
+                <?php endforeach; ?>
+
+            </div>
+            <div class="form-group">
+                <h3>optional</h3>
                 <input name="radio" type="radio" value="male">male
                 <input name="radio" type="radio" value="female">female
                 <br>
-            </div> -->
+            </div>
+            <div class="form-group">
+                <label for="profile_image">Profile Image:</label>
+                <input type="file" id="profile_image" name="profile_image" accept="image/*" required><br><br>
+                <?php foreach ($error_img as $error): ?>
+                    <h5><?= $error ?><br></h5>
+                <?php endforeach; ?>
+            </div>
             <div class="form-group">
                 <button type="submit" class="btn btn-block create-account">
                     Create Account
@@ -54,12 +88,7 @@
                         You Have Account
                     </button>
                 </a>
-
-                
-                    <?php foreach ($all_errors as $error): ?>
-                        <h5><?= $error ?><br></h5>
-                    <?php endforeach; ?>
-                
+            </div>
         </form>
         <div class="social-media">
             <h5>Sign up with social media</h5>
