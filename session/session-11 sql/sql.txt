@@ -1,0 +1,21 @@
+-- CRUD
+create(insert)  read(select)  update delete
+ R=> select
+SELECT COULN NAME FROM TAPLE NAME
+SELECT * FROM EMPS
+SELECT USER ,PASS ,MAIL FROM RMPS
+
+C =>   create=insert
+INsert into taBle name
+ (s,s) values (d,d)  
+
+
+
+U=> update
+
+update taBle name 
+    set col-name = new value 
+    set col-name2 = new value2 
+    set col-name3 = new value3 
+                                where id =100
+                                

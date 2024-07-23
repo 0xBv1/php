@@ -210,8 +210,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $phone_number = $_POST['phone-number'];
     $day = $_POST['birth-date'];
     $email = $_POST['email'];
-    if (validateUsername($username) && validatePassword($password, $repassword) && validateEmail($email) && isValidPhoneNumber($phone_number) && validateDateOfBirth($day)) {
+    if (validateUsername($username) ) {
         echo "<h3> all data is ok</h3>";
+        //connect && validatePassword($password, $repassword) && validateEmail($email) && isValidPhoneNumber($phone_number) && validateDateOfBirth($day)
+        // $conn=mysqli_connect('localhost','root','','regg','3306');
+
+        // //statment
+        // $iinsert ='INSERT INTO reg( "usernames") values ( "$username")';
+        // //excute
+        // mysqli_query( $conn, $iinsert );
+        $servername = "localhost";
+        $username = "root";
+        $password = "";
+        $dbname = "regg";
+        
+        // Create connection
+        $conn = new mysqli($servername, $username, $password, $dbname);
+        
+        // Check connection
+       
+       
+        
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
+          }
+          
+          echo "Connected successfully";
+          $sql = "INSERT INTO reg (usernames)   VALUES ('John')";
+          
+          if ($conn->query($sql) === TRUE) {
+            echo "New record created successfully";
+          } else {
+            echo "Error: " . $sql . "<br>" . $conn->error;
+          }
+          
+          $conn->close();
+        
+        
     }
 
 }
