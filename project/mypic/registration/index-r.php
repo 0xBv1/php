@@ -16,11 +16,14 @@
 <body>
     <div class="registration-form">
         <form method="post" enctype="multipart/form-data">
-
+            <?php if ($_SERVER['REQUEST_METHOD'] == 'POST')  :?>
+        <h5 style=" text-align: center;"><?= $validate ?><br></h5>
+                <?php endif;?>
             <div class="form-group">
             
             <label for="username">Username:</label>
                 <input type="text" class="form-control item" name="username" id="username" placeholder="Username">
+                
                 <?php foreach ($error_user as $error): ?>
                     <h5><?= $error ?><br></h5>
                 <?php endforeach; ?>
@@ -28,7 +31,7 @@
             </div>
             <div class="form-group">
             <label for="username">Password:</label>
-                <input type="password" class="form-control item" name="password" id="password" >
+                <input type="password" class="form-control item" name="password" id="password" placeholder ="password" >
                 <?php foreach ($error_pass as $error): ?>
                     <h5><?= $error ?><br></h5>
                 <?php endforeach; ?>
@@ -37,7 +40,7 @@
             <div class="form-group">
             <label for="username">Re-Enter Password:</label>
                 <input type="password" class="form-control item" name="repassword" id="password"
-                    >
+                placeholder ="repassword">
             </div>
             <div class="form-group">
             <label for="username">Email:</label>
@@ -66,10 +69,10 @@
                 <?php endforeach; ?>
 
             </div>
-            <div class="form-group">
-                <h3>optional</h3>
-                <input name="radio" type="radio" value="male">male
-                <input name="radio" type="radio" value="female">female
+            <div style=" text-align: center;" class="form-group">
+                <h3 style=" text-align: center;">Optional Data</h3>
+                <h3><input name="radio" type="radio" value="male">male</h3>
+                <h3><input name="radio" type="radio" value="female">female</h3>
                 <br>
             </div>
             <div class="form-group">

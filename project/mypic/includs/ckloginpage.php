@@ -2,69 +2,94 @@
 // var_dump($_POST);
 
 // Array containing usernames and passwords
-$users = array(
-    "user1" => "password1",
-    "user2" => "password2",
-    "user3" => "password3"
-);
-$all_errors =[];
+
+$all_errors = [];
+
+// Create connection
+
+// Check connection
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-
-    // Function to validate username and password
-    function validateUser($username, $password, $users)
-    {
-        if (isset($users[$username]) && $users[$username] === $password) {
-            return true;
-        } else {
+    function validateInput($input) {
+        // Remove HTML tags to prevent XSS
+        $input = strip_tags($input);
+        // Escape special characters to prevent XSS
+        $input = htmlspecialchars($input, ENT_QUOTES, 'UTF-8');
+        return $input;
+    }
+    
+    function checkSQLInjection($input) {
+        // Basic check for SQL injection patterns
+        $pattern = '/(\b(SELECT|UNION|INSERT|UPDATE|DELETE|DROP|--|\/\*|\*\/)\b)/i';
+        if (preg_match($pattern, $input)) {
             return false;
         }
+        return true;
     }
-
-    // Function to sanitize user inputs to prevent XSS
-    function sanitizeInput($data)
-    {
-        return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
-    }
-
-    // Function to validate username using regex and length check
-    function isValidUsername($username)
-    {
-        if (strlen($username) < 3 || strlen($username) > 20) {
+    
+    function validateUser($servername, $username_db, $password_db, $dbname, $input_username, $input_password) {
+        // Validate and sanitize input
+        $input_username = validateInput($input_username);
+        $input_password = validateInput($input_password);
+    
+        // Check for SQL injection
+        if (!checkSQLInjection($input_username) || !checkSQLInjection($input_password)) {
             return false;
-        }else{
-            return true;
         }
-        
-    }
-
-    // Function to validate password using regex and length check
-    function isValidPassword($password)
-    {
-        if (strlen($password) < 8) {
-            return false;
-        }else{
-            return true;
+    
+        // Create connection
+        $conn = new mysqli($servername, $username_db, $password_db, $dbname);
+    
+        // Check connection
+        if ($conn->connect_error) {
+            die("Connection failed: " . $conn->connect_error);
         }
-        
-        
+    
+        // Prepare and bind
+        $stmt = $conn->prepare('SELECT passwords FROM reg WHERE usernames = ?');
+        $stmt->bind_param('s', $input_username); // 's' denotes the type string
+    
+        // Execute the statement
+        $stmt->execute();
+    
+        // Get the result
+        $result = $stmt->get_result();
+    
+        // Check if we have a result
+        if ($result->num_rows > 0) {
+            // Fetch the row
+            $row = $result->fetch_assoc();
+    
+            // Validate the password
+            if ($input_password === $row['passwords']) {
+                // Close the statement and connection
+                $stmt->close();
+                $conn->close();
+                return true; // Valid username and password
+            }
+        }
+    
+        // Close the statement and connection
+        $stmt->close();
+        $conn->close();
+        return false; // Invalid username or password
     }
-
+    
     // Example usage
-    $username = sanitizeInput($_POST['username'] ?? '');
-    $password = sanitizeInput($_POST['password'] ?? '');
-
-    if (isValidUsername($username) && isValidPassword($password)) {
-        if (validateUser($username, $password, $users)) {
-            echo "Login successful!";
-        } else {
-            $all_errors[]= "Invalid username or password.";
-        }
+    $servername = "localhost";
+    $username_db = "root";
+    $password_db = "";
+    $dbname = "regg";
+    
+    
+    $input_username = $_POST['username'];
+    $input_password = $_POST['password'];
+    
+    if (validateUser($servername, $username_db, $password_db, $dbname, $input_username, $input_password)) {
+        echo "Login successful";
     } else {
-        $all_errors[]= "Invalid input.";
+        echo "Invalid username or password";
     }
-
-
-
-} 
-
+    
+}

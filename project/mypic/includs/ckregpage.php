@@ -6,10 +6,10 @@ $error_email = [];
 $error_phone = [];
 $error_date = [];
 $error_img = [];
+$path = '';
 // echo "<pre>";
 // print_r($_POST);
-// // print_r($all_errors);
-
+// print_r($all_errors);
 // echo "</pre>";
 
 
@@ -17,7 +17,7 @@ function validateUsername($username)
 {
     global $flag, $all_errors, $error_user;
     $length = strlen($username);
-    if ($length > 8 && $length < 20) {
+    if ($length > 3 && $length < 20) {
         if (!preg_match('/[!@#$%^*()_+\-=~`<>\"\'&]/', $username)) {
             $flag++;
             return true;
@@ -27,8 +27,8 @@ function validateUsername($username)
             $error_user[] = "Username mustn`t contain  special character.";
         }
     } else {
-        $all_errors[] = "username must be between 8 and 20 characters.";
-        $error_user[] = "username must be between 8 and 20 characters.";
+        $all_errors[] = "username must be between 4 and 20 characters.";
+        $error_user[] = "username must be between 4 and 20 characters.";
     }
 }
 function validatePassword($password, $repassword)
@@ -70,7 +70,7 @@ function validateEmail($email)
 {
     global $flag, $all_errors, $error_email;
     // Define allowed domains
-    $allowedDomains = ['gmail.com', 'yahoo.com', 'hotmail.com'];
+    $allowedDomains = ['gmail.com', 'mailinator.com', 'hotmail.com'];
     $allowedSpecialChars = '!#$%^&*()_+-=[]{}|;:,<>?';
     $domain = substr(strrchr($email, "@"), 1);
     if (in_array($domain, $allowedDomains)) {
@@ -165,89 +165,93 @@ function validateDateOfBirth($dob)
 
     return true;
 }
-function checkdata($data){
-    global $error_img;
+function checkdata($data)
+{
+    global $error_img, $path;
     $file = $data;
     $file_name = $file['name'];
     $file_size = $file['size'];
     $file_type = $file['type'];
     $file_tmp = $file['tmp_name'];
-    $allowedext = ['jpg','jpeg','png','gif','pdf'];
+    $allowedext = ['jpg', 'jpeg', 'png', 'gif', 'pdf'];
 
     ////////////////////////////////
-    $arrfilename= explode('.', $file_name);
-    $fileext =strtolower(end($arrfilename));
-    $unique = md5(time().rand()).'.'.$fileext;
+    $arrfilename = explode('.', $file_name);
+    $fileext = strtolower(end($arrfilename));
+    $unique = md5(time() . rand()) . '.' . $fileext;
     // for test
     //echo $unique;
-    if (in_array($fileext, $allowedext)){
-        if ($file_size <= 1000000){
-            if ($file_type == 'image/jpeg' || $file_type == 'image/png' ){
-                echo 'File uploaded successfully';
-                return move_uploaded_file($_FILES["profile_image"]["tmp_name"], $_SERVER['DOCUMENT_ROOT'] .'\php\project\mypic\includs\uploads\\'.$unique );
-            }else{
-                $error_img[] =  'File type not allowed(jpeg,png only)';
+    if (in_array($fileext, $allowedext)) {
+        if ($file_size <= 1000000) {
+            if ($file_type == 'image/jpeg' || $file_type == 'image/png') {
+                return true;
+                //. move_uploaded_file($_FILES["profile_image"]["tmp_name"], $_SERVER['DOCUMENT_ROOT'] . '\php\project\mypic\includs\uploads\\' . $unique)
+            } else {
+                $error_img[] = 'File type not allowed(jpeg,png only)';
             }
-        }else{
+        } else {
             $error_img[] = 'File size is too large';
         }
-    }else{
+    } else {
         $error_img[] = 'File extension not allowed';
-        }
+    }
 
 }
 // Handle the file upload
-if (isset($_FILES['profile_image'])) {
-    $img = $_FILES['profile_image'];
-    checkdata($img);
-}
+
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $flag = 0;
+
     $username = $_POST['username'];
     $password = $_POST['password'];
     $repassword = $_POST['repassword'];
     $phone_number = $_POST['phone-number'];
     $day = $_POST['birth-date'];
     $email = $_POST['email'];
-    if (validateUsername($username) ) {
-        echo "<h3> all data is ok</h3>";
-        //connect && validatePassword($password, $repassword) && validateEmail($email) && isValidPhoneNumber($phone_number) && validateDateOfBirth($day)
-        // $conn=mysqli_connect('localhost','root','','regg','3306');
+    $gender = $_POST['radio'];
+    $img = $_FILES['profile_image'];
+    $img_name =$img ['name'];
 
-        // //statment
-        // $iinsert ='INSERT INTO reg( "usernames") values ( "$username")';
-        // //excute
-        // mysqli_query( $conn, $iinsert );
+    if (checkdata($img) && validateUsername($username) && validatePassword($password, $repassword) && validateEmail($email) && isValidPhoneNumber($phone_number) && validateDateOfBirth($day)) {
+
+    
+        $arr_of_data =array($username, $password, $phone_number, $day, $email, $gender, $img_name);
+        // echo "<pre>";
+        // print_r($arr_of_data);
+        // echo "</pre>";
         $servername = "localhost";
-        $username = "root";
+        $username_db = "root";
         $password = "";
         $dbname = "regg";
         
         // Create connection
-        $conn = new mysqli($servername, $username, $password, $dbname);
-        
+        $conn = mysqli_connect($servername, $username_db, $password, $dbname);
+
         // Check connection
-       
-       
-        
+
+
         if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-          }
-          
-          echo "Connected successfully";
-          $sql = "INSERT INTO reg (usernames)   VALUES ('John')";
-          
-          if ($conn->query($sql) === TRUE) {
-            echo "New record created successfully";
-          } else {
-            echo "Error: " . $sql . "<br>" . $conn->error;
-          }
-          
-          $conn->close();
-        
-        
+            // die("Connection failed: " . $conn->connect_error);
+        } else {
+            // echo "Connected successfully";
+            $sql = "INSERT INTO reg (usernames,passwords,emails,phones,dates, genders,imgs)   VALUES ('$username','$repassword','$email','$phone_number','$day','$gender',' $img_name')";
+            if ($conn->query($sql) === TRUE) {
+                $conn->close();
+                $validate ="New user created successfully";
+            } else {
+                // echo "Error: " . $sql . "<br>" . $conn->error;
+            }
+
+            
+
+
+
+
+        }
     }
+
+
 
 }
 
