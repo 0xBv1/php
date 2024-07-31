@@ -9,6 +9,22 @@ $all_errors = [];
 
 // Check connection
 
+session_start();
+$servername = "localhost";
+$username_db = "root";
+$password = "";
+$dbname = "regg";
+
+// Create connection
+$conn = mysqli_connect($servername, $username_db, $password, $dbname);
+
+$statm = 'SELECT emails FROM reg WHERE emails = "admin@wep.com"';
+if (!mysqli_query($conn, $statm) ->num_rows > 0) {
+    $sql = "INSERT INTO reg (usernames,passwords,emails)   VALUES ('admin','admin','admin@wep.com')";
+
+    mysqli_query($conn, $sql);
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     function validateInput($input) {
@@ -87,9 +103,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $input_password = $_POST['password'];
     
     if (validateUser($servername, $username_db, $password_db, $dbname, $input_username, $input_password)) {
-        echo "Login successful";
+        if($input_username ='admin' and $input_password = 'admin') {
+            $_SESSION['admin'] = $input_username;
+            header('location:../dash/index.php');
+            
     } else {
         echo "Invalid username or password";
     }
     
-}
+}}
