@@ -9,6 +9,7 @@ $all_errors = [];
 
 // Check connection
 
+// echo"false1";
 session_start();
 $servername = "localhost";
 $username_db = "root";
@@ -18,14 +19,12 @@ $dbname = "regg";
 // Create connection
 $conn = mysqli_connect($servername, $username_db, $password, $dbname);
 
-$statm = 'SELECT emails FROM reg WHERE emails = "admin@wep.com"';
-if (!mysqli_query($conn, $statm) ->num_rows > 0) {
-    $sql = "INSERT INTO reg (usernames,passwords,emails)   VALUES ('admin','admin','admin@wep.com')";
+// $statm = 'SELECT emails FROM reg WHERE emails = "admin@wep.com"';
+// if (!mysqli_query($conn, $statm) ->num_rows > 0) {
+//     $sql = "INSERT INTO reg (usernames,passwords,emails)   VALUES ('admin','admin','admin@wep.com')";
 
-    mysqli_query($conn, $sql);
-}
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+//     mysqli_query($conn, $sql);
+// }
 
     function validateInput($input) {
         // Remove HTML tags to prevent XSS
@@ -44,71 +43,69 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         return true;
     }
     
-    function validateUser($servername, $username_db, $password_db, $dbname, $input_username, $input_password) {
+    function validateUser( $input_username, $input_password,$servername= "localhost", $username_db= "root", $password_db = "", $dbname= "regg") {
+       
         // Validate and sanitize input
         $input_username = validateInput($input_username);
         $input_password = validateInput($input_password);
     
         // Check for SQL injection
         if (!checkSQLInjection($input_username) || !checkSQLInjection($input_password)) {
+            // echo"false1";
             return false;
         }
     
         // Create connection
-        $conn = new mysqli($servername, $username_db, $password_db, $dbname);
-    
+        $conn = mysqli_connect($servername, $username_db, $password_db, $dbname);
         // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
-    
+      
+    if (mysqli_connect_errno()) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+
         // Prepare and bind
-        $stmt = $conn->prepare('SELECT passwords FROM reg WHERE usernames = ?');
-        $stmt->bind_param('s', $input_username); // 's' denotes the type string
+        $sql = "SELECT rule , passwords FROM reg WHERE usernames = '$input_username'";
+     
     
         // Execute the statement
-        $stmt->execute();
+        $stmt=mysqli_query($conn, $sql);
     
         // Get the result
-        $result = $stmt->get_result();
-    
-        // Check if we have a result
-        if ($result->num_rows > 0) {
-            // Fetch the row
-            $row = $result->fetch_assoc();
-    
-            // Validate the password
-            if ($input_password === $row['passwords']) {
-                // Close the statement and connection
-                $stmt->close();
-                $conn->close();
-                return true; // Valid username and password
-            }
-        }
-    
-        // Close the statement and connection
-        $stmt->close();
-        $conn->close();
-        return false; // Invalid username or password
-    }
-    
-    // Example usage
-    $servername = "localhost";
-    $username_db = "root";
-    $password_db = "";
-    $dbname = "regg";
-    
-    
+        $result = mysqli_fetch_assoc($stmt);
+        // var_dump($result) ;
+        if (isset($result)) {
+            
+            // echo"true";
+           
+            $db_password =$result["passwords"];
+            if($input_password == $db_password){
+                if( isset($result["rule"])){
+                    return $result["rule"];
+
+                }
+               
+            }else {
+                return false;
+
+
+}}}
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+    // Example usage    
     $input_username = $_POST['username'];
     $input_password = $_POST['password'];
-    
-    if (validateUser($servername, $username_db, $password_db, $dbname, $input_username, $input_password)) {
-        if($input_username ='admin' and $input_password = 'admin') {
+    $rtes =validateUser($input_username, $input_password);
+
+    if ( $rtes  =="admin") {
+        echo"admin";
             $_SESSION['admin'] = $input_username;
             header('location:../dash/index.php');
             
-    } else {
-        echo "Invalid username or password";
+    } else{
+        echo"user";
+ 
+
+        header('location:../electro-master/inde1x.php');
     }
-    
-}}
+
+}
