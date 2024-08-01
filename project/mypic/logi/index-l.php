@@ -12,12 +12,19 @@
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-    <div class="registration-form">
-        <form method="post">
+    <div class="registration-form ">
+        <form method="post" class="p-3 mb-2 bg-dark text-white">
             
             <!-- <div class="form-icon">
                 <span><i class="icon icon-user"></i></span>
             </div> -->
+            <div class="col-md-3">
+                <div class="header-logo">
+                    <a href="#" class="logo">
+                        <img src="logo.png" alt="">
+                    </a>
+                </div>
+            </div>
             <div class="form-group">
                 <input type="text" class="form-control item" id="username" name="username" placeholder="Username">
             </div>
@@ -35,9 +42,7 @@
             <?php foreach($all_errors as $error): ?>
                 <?= "<h5> $error <br></h5>"; ?>
             <?php endforeach; ?>
-
-        </form>
-        <div class="social-media">
+            <div class="social-media p-3 mb-2 bg-dark text-white">
             <h5>Sign in with social media</h5>
             <div class="social-icons">
                 <a href="#"><i class="icon-social-facebook" title="Facebook"></i></a>
@@ -45,6 +50,8 @@
                 <a href="#"><i class="icon-social-twitter" title="Twitter"></i></a>
             </div>
         </div>
+        </form>
+        
     </div>
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>

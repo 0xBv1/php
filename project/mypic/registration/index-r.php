@@ -15,7 +15,14 @@
 
 <body>
     <div class="registration-form">
-        <form method="post" enctype="multipart/form-data">
+        <form class="p-3 mb-2 bg-dark text-white" method="post" enctype="multipart/form-data">
+            <div class="col-md-3">
+                <div class="header-logo">
+                    <a href="#" class="logo">
+                        <img src="logo.png" alt="">
+                    </a>
+                </div>
+            </div>
             <?php if ($_SERVER['REQUEST_METHOD'] == 'POST')  :?>
         <h5 style=" text-align: center;"><?= $validate ?><br></h5>
                 <?php endif;?>
@@ -92,15 +99,15 @@
                     </button>
                 </a>
             </div>
-        </form>
-        <div class="social-media">
+        
+        <div class="social-media  p-3 mb-2 bg-dark text-white ">
             <h5>Sign up with social media</h5>
             <div class="social-icons">
                 <a href="#"><i class="icon-social-facebook" title="Facebook"></i></a>
                 <a href="#"><i class="icon-social-google" title="Google"></i></a>
                 <a href="#"><i class="icon-social-twitter" title="Twitter"></i></a>
             </div>
-        </div>
+        </div></form>
     </div>
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script type="text/javascript"
