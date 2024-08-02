@@ -1,4 +1,184 @@
+<?php 
+session_start();
 
+function sqladd( $data,$table="reg") {
+    global $conn;
+ 
+    
+    if (mysqli_connect_errno()) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+
+    $columns = implode(", ", array_keys($data));
+    $placeholders = implode(", ", array_fill(0, count($data), "?"));
+    $values = array_values($data);
+
+    $sql = "INSERT INTO $table ($columns) VALUES ($placeholders)";
+
+    if ($stmt = mysqli_prepare($conn, $sql)) {
+        $types = str_repeat('s', count($values));
+        mysqli_stmt_bind_param($stmt, $types, ...$values);
+
+        if (mysqli_stmt_execute($stmt)) {
+            echo "Record added successfully.";
+        } else {
+            echo "Error adding record: " . mysqli_error($conn);
+        }
+
+        mysqli_stmt_close($stmt);
+    } else {
+        echo "Failed to prepare statement.";
+    }
+
+    mysqli_close($conn);
+}
+
+function sqldelete($table, $condition) {
+    global $servername, $username_db, $password ,$dbname;
+
+    $conn = mysqli_connect($servername, $username_db, $password, $dbname);
+    
+    if (mysqli_connect_errno()) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+
+    $conditionString = "";
+    $values = [];
+    foreach ($condition as $column => $value) {
+        $conditionString .= "$column = ? AND ";
+        $values[] = $value;
+    }
+    $conditionString = rtrim($conditionString, " AND ");
+    var_dump($conditionString);
+    $sql = "DELETE FROM $table WHERE $conditionString";
+
+    if ($stmt = mysqli_prepare($conn, $sql)) {
+        $types = str_repeat('s', count($values)); 
+        mysqli_stmt_bind_param($stmt, $types, ...$values);
+
+        if (mysqli_stmt_execute($stmt)) {
+            echo "Record deleted successfully.";
+        } else {
+            echo "Error deleting record: " . mysqli_error($conn);
+        }
+
+        mysqli_stmt_close($stmt);
+    } else {
+        echo "Failed to prepare statement.";
+    }
+
+    mysqli_close($conn);
+}
+function sqlread($statm)
+{
+    global $servername, $username_db, $password, $dbname;
+    $conn = mysqli_connect($servername, $username_db, $password, $dbname);
+
+    if (mysqli_connect_errno()) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+
+    $data = [];
+
+    if ($stmt = mysqli_prepare($conn, $statm)) {
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+
+        if ($result) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $data[] = $row;
+            }
+        } else {
+            echo "No results found.";
+        }
+
+        mysqli_stmt_close($stmt);
+    } else {
+        echo "Failed to prepare statement.";
+    }
+
+    mysqli_close($conn);
+
+    return $data;
+}
+function sqlupdate($table,$data, $condition) {
+
+    global $servername, $username_db, $password ,$dbname;
+    
+    $conn = mysqli_connect($servername, $username_db, $password, $dbname);
+    
+    if (mysqli_connect_errno()) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+
+    $setString = "";
+    $values = [];
+    foreach ($data as $column => $value) {
+        $setString .= "$column = ?, ";
+        $values[] = $value;
+    }
+    $setString = rtrim($setString, ", ");
+
+    $conditionString = "";
+    foreach ($condition as $column => $value) {
+        $conditionString .= "$column = ? AND ";
+        $values[] = $value;
+    }
+    $conditionString = rtrim($conditionString, " AND ");
+
+    $sql = "UPDATE $table SET $setString WHERE $conditionString";
+
+    if ($stmt = mysqli_prepare($conn, $sql)) {
+        $types = str_repeat('s', count($values)); // Assuming all parameters are strings
+        mysqli_stmt_bind_param($stmt, $types, ...$values);
+
+        if (mysqli_stmt_execute($stmt)) {
+            // echo "Record updated successfully.";
+        } else {
+            echo "Error updating record: " . mysqli_error($conn);
+        }
+
+        mysqli_stmt_close($stmt);
+    } else {
+        echo "Failed to prepare statement.";
+    }
+
+    mysqli_close($conn);
+}
+
+function removeAllData( $tableName) {
+    $servername = "localhost";
+    $username_db = "root";
+    $password = "";
+    $dbname = "regg";
+
+    // Create a connection to the database
+    $conn = mysqli_connect($servername, $username_db, $password, $dbname);
+
+    $sql = "TRUNCATE TABLE $tableName";
+    if (mysqli_query($conn, $sql)) {
+        echo "All data removed from table: $tableName";
+    } else {
+        echo "Error removing data: " . mysqli_error($conn);
+    }
+ 
+}
+
+$servername = "localhost";
+$username_db = "root";
+$password = "";
+$dbname = "regg";
+
+// Create connection
+$conn = mysqli_connect($servername, $username_db, $password, $dbname);
+
+
+$products  = sqlread("SELECT * FROM products");
+// echo"<pre>";
+// // print_r($data_products );
+// echo"</pre>";
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 	<head>
