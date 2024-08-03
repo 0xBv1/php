@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $input_password = $_POST['password'];
     $rtes =validateUser($input_username, $input_password);
 // var_dump($rtes);
-    if ( $rtes["rule"]  =="admin") {
+    if ( $rtes&&$rtes["rule"]  =="admin") {
         // echo"admin";
             $_SESSION['user'] = $input_username;
             $_SESSION['id_user'] = $rtes["id"];
@@ -107,7 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             header('location:../dash/usersedit.php');
             
-    } elseif($rtes["rule"]  =="user"){
+    } elseif($rtes&&$rtes["rule"]  =="user"){
         // echo"user";
  
         $_SESSION['user'] = $input_username;

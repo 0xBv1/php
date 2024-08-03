@@ -23,8 +23,8 @@
                     </a>
                 </div>
             </div>
-            <?php if ($_SERVER['REQUEST_METHOD'] == 'POST')  :?>
-        <h5 style=" text-align: center;"><?= $validate ?><br></h5>
+            <?php if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($validate))  :?>
+                <h5 style=" text-align: center;"><?= $validate ?><br></h5>
                 <?php endif;?>
             <div class="form-group">
             

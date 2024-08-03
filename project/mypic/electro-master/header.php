@@ -106,47 +106,47 @@ function sqlread($statm)
 }
 function sqldelet($table, $condition)
 {
-    global $servername, $username_db, $password, $dbname;
+	global $servername, $username_db, $password, $dbname;
 
-    // Create a connection to the database
-    $conn = mysqli_connect($servername, $username_db, $password, $dbname);
+	// Create a connection to the database
+	$conn = mysqli_connect($servername, $username_db, $password, $dbname);
 
-    if (mysqli_connect_errno()) {
-        die("Connection failed: " . mysqli_connect_error());
-    }
+	if (mysqli_connect_errno()) {
+		die("Connection failed: " . mysqli_connect_error());
+	}
 
-    // Prepare condition string and values for SQL statement
-    $conditionString = "";
-    $values = [];
-    foreach ($condition as $column => $value) {
-        $conditionString .= "`$column` = ? AND "; // Enclose column name in backticks
-        $values[] = $value;
-    }
-    $conditionString = rtrim($conditionString, " AND ");
+	// Prepare condition string and values for SQL statement
+	$conditionString = "";
+	$values = [];
+	foreach ($condition as $column => $value) {
+		$conditionString .= "`$column` = ? AND "; // Enclose column name in backticks
+		$values[] = $value;
+	}
+	$conditionString = rtrim($conditionString, " AND ");
 
-    // Prepare the SQL statement
-    $sql = "DELETE FROM `$table` WHERE $conditionString";
+	// Prepare the SQL statement
+	$sql = "DELETE FROM `$table` WHERE $conditionString";
 
-    if ($stmt = mysqli_prepare($conn, $sql)) {
-        // Determine the types for binding parameters
-        $types = str_repeat('s', count($values));
-        mysqli_stmt_bind_param($stmt, $types, ...$values);
+	if ($stmt = mysqli_prepare($conn, $sql)) {
+		// Determine the types for binding parameters
+		$types = str_repeat('s', count($values));
+		mysqli_stmt_bind_param($stmt, $types, ...$values);
 
-        // Execute the statement
-        if (mysqli_stmt_execute($stmt)) {
-            echo "Record deleted successfully.";
-        } else {
-            echo "Error deleting record: " . mysqli_stmt_error($stmt); // Use mysqli_stmt_error for statement-specific errors
-        }
+		// Execute the statement
+		if (mysqli_stmt_execute($stmt)) {
+			echo "Record deleted successfully.";
+		} else {
+			echo "Error deleting record: " . mysqli_stmt_error($stmt); // Use mysqli_stmt_error for statement-specific errors
+		}
 
-        // Close the statement
-        mysqli_stmt_close($stmt);
-    } else {
-        echo "Failed to prepare statement.";
-    }
+		// Close the statement
+		mysqli_stmt_close($stmt);
+	} else {
+		echo "Failed to prepare statement.";
+	}
 
-    // Close the database connection
-    mysqli_close($conn);
+	// Close the database connection
+	mysqli_close($conn);
 }
 function removeAllData($tableName)
 {
@@ -293,43 +293,44 @@ if (isset($_SESSION["user"])) {
 																class="qty"><?= $cart_item['qty'] ?>x</span>$<?= $cart_item['prices'] - ($cart_item['prices'] * $cart_item['discounts'] / 100); ?>
 														</h4>
 													</div>
-												
 
-											<?php endif; ?>
-										<?php endforeach; ?>
 
-										<div class="cart-summary">
-											<small><?= count($cart_items) ?> Item(s) selected</small>
-											<?php foreach ($cart_items as $cart_item): ?>
-												<?php
-												$all = 0;
-												$all += $cart_item['prices'] * $cart_item['qty'];
-
-												?>
+												<?php endif; ?>
 											<?php endforeach; ?>
-<?php if (isset($all)){
-echo "<h5>SUBTOTAL:$$all</h5>";
-}?>
-											
-										</div>
-										<div class="cart-btns">
-											<a href="Checkout.php">Checkout <i class="fa fa-arrow-circle-right"></i></a>
+
+											<div class="cart-summary">
+												<small><?= count($cart_items) ?> Item(s) selected</small>
+												<?php foreach ($cart_items as $cart_item): ?>
+													<?php
+													$all = 0;
+													$all += $cart_item['prices'] * $cart_item['qty'];
+
+													?>
+												<?php endforeach; ?>
+												<?php if (isset($all)) {
+													echo "<h5>SUBTOTAL:$$all</h5>";
+												} ?>
+
+											</div>
+											<div class="cart-btns">
+												<a href="Checkout.php">Checkout <i
+														class="fa fa-arrow-circle-right"></i></a>
+											</div>
 										</div>
 									</div>
-								</div>
-								<!-- /Cart -->
+									<!-- /Cart -->
 
-								<!-- Menu Toogle -->
-								<div class="menu-toggle">
-									<a href="#">
-										<i class="fa fa-bars"></i>
-										<span>Menu</span>
-									</a>
+									<!-- Menu Toogle -->
+									<div class="menu-toggle">
+										<a href="#">
+											<i class="fa fa-bars"></i>
+											<span>Menu</span>
+										</a>
+									</div>
+									<!-- /Menu Toogle -->
 								</div>
-								<!-- /Menu Toogle -->
 							</div>
-						</div>
-						<!-- /ACCOUNT -->
+							<!-- /ACCOUNT -->
 				</ul>
 				<ul class="header-links pull-right">
 					<?php if (isset($_SESSION["user"])): ?>

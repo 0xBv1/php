@@ -93,8 +93,8 @@ $products = sqlread("SELECT * FROM products");
 									<div class="product-body">
 										<p class="product-category">
 											<?php
-											$categories = json_decode($product['categores'], true);
-											echo is_array($categories) ? implode(', ', $categories) : 'Uncategorized';
+											$categories = $product['categores'];
+											echo $categories;
 											?>
 										</p>
 										<h3 class="product-name"><a

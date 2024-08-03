@@ -78,8 +78,7 @@ foreach ($products as $product) {
 
 						<?php if ($count > 0): ?>
 							<span class="product-available">In Stock</span>
-							<p><?php echo $products[0]['descriptions']; ?></p>
-
+			
 							<div class="product-options">
 
 							</div>
@@ -104,8 +103,11 @@ foreach ($products as $product) {
 						<?php else: ?>
 
 							<span class="product-available">out of stock</span>
+							<?php if (isset($_GET['error'])): ?>
+								<span class="product-available"><?=$_GET['error']?></span>
 
 
+						<?php endif; ?>
 						<?php endif; ?>
 					</div>
 

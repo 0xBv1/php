@@ -162,7 +162,7 @@ if (isset($_POST['d'])) {
                             <?php if (isset($_POST['u'])): ?>
                                 <?php $thse = $_GET['iid'];
                                 global $thse;
-
+                                
                                 ?>
 
                                 <div class="bg-secondary rounded-top p-4">

@@ -15,6 +15,7 @@ if (!$conn) {
 
 function sqladd($data, $table = "reg")
 {
+
     global $conn;
 
     $columns = implode(", ", array_keys($data));
@@ -50,7 +51,7 @@ function sqldelete($table, $condition)
         $values[] = $value;
     }
     $conditionString = rtrim($conditionString, " AND ");
-    
+
     $sql = "DELETE FROM $table WHERE $conditionString";
 
     if ($stmt = mysqli_prepare($conn, $sql)) {
@@ -155,43 +156,89 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $id_user = $_SESSION["id_user"];
 
     $carts = sqlread("SELECT * FROM cart WHERE id_u = $id_user");
-    
+
     foreach ($carts as $cart) {
         $id_cart = $cart["id_p_c"];
         $id_pdb = $cart["id_p"];
         $qtydb = $cart["qty"];
-        $nqty = $qtydb + $quantity;
+        $product_info = sqlread("SELECT count FROM products WHERE id_p = $id_product");
 
-        if ($id_product == $id_pdb) {
-            $data = ["qty" => $nqty];
-            $condition = ["id_p_c" => $id_cart];
-            sqlupdate("cart", $data, $condition);
-            header('Location: product.php?id_product=' . $id_product);
+        if (!empty($product_info)) {
+            $count_cart = $product_info[0]['count'];
+
+            if ($quantity <= $count_cart) {
+                $new_count_value_in_db_product = $count_cart - $quantity;
+                $nqty = $qtydb + $quantity;
+                $qupdate = "UPDATE products SET count = $new_count_value_in_db_product WHERE id_p = $id_product";
+                sqlupdate("products", ["count" => $new_count_value_in_db_product], ["id_p" => $id_product]);
+
+                if ($id_product == $id_pdb) {
+                    $data = ["qty" => $nqty];
+                    $condition = ["id_p_c" => $id_cart];
+                    sqlupdate("cart", $data, $condition);
+                    header('Location: product.php?id_product=' . $id_product);
+                    exit();
+                }
+            } else {
+                // Handle the case where requested quantity is more than available stock
+                echo "Error: Requested quantity exceeds available stock.";
+                // You might want to redirect the user back to the product page with an error message
+                header('Location: product.php?id_product=' . $id_product . '&error=quantity_exceeds_stock');
+                exit();
+            }
+        } else {
+            echo "Error: Product not found.";
             exit();
         }
     }
+    $product_info = sqlread("SELECT count FROM products WHERE id_p = $id_product");
+    $product_info = sqlread("SELECT count FROM products WHERE id_p = $id_product");
 
-    $data = [
-        "id_u" => $id_user,
-        "id_p" => $id_product,
-        "qty" => $quantity
-    ];
-    sqladd($data, "cart");
-    header('Location: product.php?id_product=' . $id_product);
-    exit();
+    if (!empty($product_info)) {
+        $count_cart = $product_info[0]['count'];
+
+        if ($quantity <= $count_cart) {
+            $new_count_value_in_db_product = $count_cart - $quantity;
+            $qupdate = "UPDATE products SET count = $new_count_value_in_db_product WHERE id_p = $id_product";
+            sqlupdate("products", ["count" => $new_count_value_in_db_product], ["id_p" => $id_product]);
+
+            $data = [
+                "id_u" => $id_user,
+                "id_p" => $id_product,
+                "qty" => $quantity
+            ];
+            sqladd($data, "cart");
+            header('Location: product.php?id_product=' . $id_product);
+            exit();
+        } else {
+            // Handle the case where requested quantity is more than available stock
+            // header('Location: product.php?id_product=' . $id_product);
+            // header('Location: product.php?id_product=' . $id_product );
+            echo "Error: Requested quantity exceeds available stock.";
+            // You might want to redirect the user back to the product page with an error message
+            header('Location: product.php?id_product=' . $id_product . '&error=quantity_exceeds_stock');
+            exit();
+        }
+    } else {
+        echo "Error: Product not found.";
+        exit();
+    }
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
     <!-- <?= $_SESSION["user"] ?>
     <?= $_SESSION["id_user"] ?>
     <?= $_SESSION["userrule"] ?> -->
 </body>
+
 </html>
