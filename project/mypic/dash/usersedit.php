@@ -123,6 +123,6 @@ include ("header.php");
 include ("footer.php");
 ?>
 <?php
-// End output buffering and flush the buffer
+// End output buffering and flush the bufferob_start();
 ob_end_flush();
 ?>

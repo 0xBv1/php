@@ -7,12 +7,34 @@ $error_phone = [];
 $error_date = [];
 $error_img = [];
 $path = '';
+$immm = '';
+$flag =0;
 // echo "<pre>";
 // print_r($_POST);
 // print_r($all_errors);
 // echo "</pre>";
 
+session_start();
+if (isset($_SESSION["user"])) {
+    if ( $_SESSION["userrule"]  =="admin") {
+        // echo"admin";
+            $_SESSION['user'] = $input_username;
+            $_SESSION['userrule'] = $result["rule"];
 
+            header('location:../dash/index.php');
+            
+    } elseif($_SESSION["userrule"]   =="user"){
+        // echo"user";
+ 
+        $_SESSION['user'] = $input_username;
+        $_SESSION['userrule'] = $result["rule"];
+
+        header('location:../electro-master/inde1x.php');
+    
+
+}else{
+    echo "error";
+}}
 function validateUsername($username)
 {
     global $flag, $all_errors, $error_user;
@@ -167,7 +189,7 @@ function validateDateOfBirth($dob)
 }
 function checkdata($data)
 {
-    global $error_img, $path;
+    global $error_img;
     $file = $data;
     $file_name = $file['name'];
     $file_size = $file['size'];
@@ -182,10 +204,13 @@ function checkdata($data)
     // for test
     //echo $unique;
     if (in_array($fileext, $allowedext)) {
+        global $immm ,$flag;
         if ($file_size <= 1000000) {
             if ($file_type == 'image/jpeg' || $file_type == 'image/png') {
+                
+
+                $flag++;
                 return true;
-                //. move_uploaded_file($_FILES["profile_image"]["tmp_name"], $_SERVER['DOCUMENT_ROOT'] . '\php\project\mypic\includs\uploads\\' . $unique)
             } else {
                 $error_img[] = 'File type not allowed(jpeg,png only)';
             }
@@ -202,7 +227,7 @@ function checkdata($data)
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $flag = 0;
-
+    global $immm;   
     $username = $_POST['username'];
     $password = $_POST['password'];
     $repassword = $_POST['repassword'];
@@ -214,7 +239,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $img_name =$img ['name'];
 
     if (checkdata($img) && validateUsername($username) && validatePassword($password, $repassword) && validateEmail($email) && isValidPhoneNumber($phone_number) && validateDateOfBirth($day)) {
+        $file = $img;
+        $file_name = $file['name'];
+        $file_size = $file['size'];
+        $file_type = $file['type'];
+        $file_tmp = $file['tmp_name'];
+        $allowedext = ['jpg', 'jpeg', 'png', 'gif', 'pdf'];
 
+        ////////////////////////////////
+        $arrfilename = explode('.', $file_name);
+        $fileext = strtolower(end($arrfilename));
+        $unique = md5(time() . rand()) . '.' . $fileext;
+        $immm =$_SERVER['DOCUMENT_ROOT'] . '\php\project\mypic\includs\uploads\\' . $unique;
+        move_uploaded_file($_FILES["profile_image"]["tmp_name"],  $immm);
     
         $arr_of_data =array($username, $password, $phone_number, $day, $email, $gender, $img_name);
         // echo "<pre>";
@@ -235,7 +272,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             // die("Connection failed: " . $conn->connect_error);
         } else {
             // echo "Connected successfully";
-            $sql = "INSERT INTO reg (usernames,passwords,emails,phones,dates, genders,imgs)   VALUES ('$username','$repassword','$email','$phone_number','$day','$gender',' $img_name')";
+            $sql = "INSERT INTO reg (usernames,passwords,emails,phones,dates, genders,imgs)   VALUES ('$username','$repassword','$email','$phone_number','$day','$gender','  $immm')";
             if ($conn->query($sql) === TRUE) {
                 $conn->close();
                 $validate ="New user created successfully";

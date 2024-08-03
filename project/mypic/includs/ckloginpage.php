@@ -1,30 +1,29 @@
 <?php
-// var_dump($_POST);
-
-// Array containing usernames and passwords
 
 $all_errors = [];
 
-// Create connection
-
-// Check connection
-
-// echo"false1";
 session_start();
+if (isset($_SESSION["user"])) {
+    if ( $_SESSION["userrule"]  =="admin") {
+        // echo"admin";
+            header('location:../dash/usersedit.php');
+            
+    } elseif($_SESSION["userrule"]   =="user"){
+        // echo"user";
+         header('location:../electro-master/inde1x.php');
+    
+
+}else{
+    // echo "error";
+}
+}
 $servername = "localhost";
 $username_db = "root";
 $password = "";
 $dbname = "regg";
 
-// Create connection
 $conn = mysqli_connect($servername, $username_db, $password, $dbname);
 
-// $statm = 'SELECT emails FROM reg WHERE emails = "admin@wep.com"';
-// if (!mysqli_query($conn, $statm) ->num_rows > 0) {
-//     $sql = "INSERT INTO reg (usernames,passwords,emails)   VALUES ('admin','admin','admin@wep.com')";
-
-//     mysqli_query($conn, $sql);
-// }
 
     function validateInput($input) {
         // Remove HTML tags to prevent XSS
@@ -64,7 +63,7 @@ $conn = mysqli_connect($servername, $username_db, $password, $dbname);
     }
 
         // Prepare and bind
-        $sql = "SELECT rule , passwords FROM reg WHERE usernames = '$input_username'";
+        $sql = "SELECT id,rule , passwords FROM reg WHERE usernames = '$input_username'";
      
     
         // Execute the statement
@@ -80,7 +79,11 @@ $conn = mysqli_connect($servername, $username_db, $password, $dbname);
             $db_password =$result["passwords"];
             if($input_password == $db_password){
                 if( isset($result["rule"])){
-                    return $result["rule"];
+                    return [
+                        'rule' => $result["rule"],
+                        'id' => $result["id"],
+                    ];
+                    
 
                 }
                
@@ -95,17 +98,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $input_username = $_POST['username'];
     $input_password = $_POST['password'];
     $rtes =validateUser($input_username, $input_password);
+// var_dump($rtes);
+    if ( $rtes["rule"]  =="admin") {
+        // echo"admin";
+            $_SESSION['user'] = $input_username;
+            $_SESSION['id_user'] = $rtes["id"];
+            $_SESSION['userrule'] = $rtes["rule"];
 
-    if ( $rtes  =="admin") {
-        echo"admin";
-            $_SESSION['admin'] = $input_username;
-            header('location:../dash/index.php');
+            header('location:../dash/usersedit.php');
             
-    } else{
-        echo"user";
+    } elseif($rtes["rule"]  =="user"){
+        // echo"user";
  
+        $_SESSION['user'] = $input_username;
+        $_SESSION['userrule'] = $rtes["rule"];
+        $_SESSION["id_user"] = $rtes["id"];
 
         header('location:../electro-master/inde1x.php');
-    }
+    
 
+}else{
+    // echo "error";
+}
 }
