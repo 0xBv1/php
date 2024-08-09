@@ -43,3 +43,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['image'])) {
     </div>
 </body>
 </html>
+
+<?php
+// Your PHP code here
+?>
+<?php
+echo "Hello, World!";
+?>
