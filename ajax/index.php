@@ -29,15 +29,15 @@
                 <div>
                     <input style="display:none;" type="text" class="form-control" id="stuid" value="">
                     <label for="nameid" class="form-label">name</label>
-                    <input type="text" class="form-control" id="nameid">
+                    <input type="text" class="form-control" id="nameid" required>
                 </div>
                 <div>
                     <label for="emailid" class="form-label">email</label>
-                    <input type="email" class="form-control" id="emailid">
+                    <input type="email" class="form-control" id="emailid"required>
                 </div>
                 <div>
                     <label for="passwordid" class="form-label">password</label>
-                    <input type="email" class="form-control" id="passwordid">
+                    <input type="email" class="form-control" id="passwordid"required>
                 </div>
                 <div class="mt-5">
                     <button type="submit" class="btn btn-primary" id="btnadd">save</button>
